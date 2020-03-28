@@ -9,6 +9,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import BottomTabNavigator from './navigation/BottomTabNavigator';
 import useLinking from './navigation/useLinking';
 
+import FormJob from "./components/FormJob";
+
 const Stack = createStackNavigator();
 
 export default function App(props) {
@@ -52,6 +54,13 @@ export default function App(props) {
         <NavigationContainer ref={containerRef} initialState={initialNavigationState}>
           <Stack.Navigator>
             <Stack.Screen name="Root" component={BottomTabNavigator} />
+            <Stack.Screen
+              name="FormJob" 
+              component={FormJob} 
+              options={{
+                title: 'Form Job'
+              }}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </View>
