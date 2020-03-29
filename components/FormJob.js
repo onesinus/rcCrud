@@ -1,11 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TextInput, StyleSheet, View, Button, Dimensions, Text, AsyncStorage } from "react-native";
 import { MonoText } from '../components/StyledText';
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-export default function FormJob({ navigation }){
-    const [name, setName] = useState("");
-    const [detail, setDetail] = useState("");
+export default function FormJob({ navigation, route }){
+    const { job } = route.params;
+
+    const [name, setName]       = useState("");
+    const [detail, setDetail]   = useState("");
+
+    useEffect(() => {
+        if (job) {
+            setName(job.name);
+            setDetail(job.detail);
+        }
+    }, [job]);   
 
     const onSave = () => {
         if (!name) {
@@ -16,21 +25,24 @@ export default function FormJob({ navigation }){
             AsyncStorage.getItem('jobs', (error, result) => {
                 if (result) {
                     let currentJobs = JSON.parse(result);
-                    currentJobs.push({
-                        id: currentJobs.length+1,
-                        icon: 'md-school',
-                        name,
-                        detail
-                    });
+                    currentJobs = currentJobs.length > 0 ? currentJobs : [];
+                    if (!job) {                            
+                        currentJobs.push({
+                            id: currentJobs.length+1,
+                            icon: 'md-school',
+                            name,
+                            detail
+                        });
+                    } else if(job) { // this is handle edit data;
+                        currentJobs.some((objJob, idxJob) => {
+                            if (objJob.id === job.id) {
+                                currentJobs[idxJob]['name']     = name;
+                                currentJobs[idxJob]['detail']   = detail;                                        
+                            }
+                            return false;
+                        });
+                    }
                     AsyncStorage.setItem('jobs', JSON.stringify(currentJobs));
-                }else{
-                    let newJobs = [{
-                        id: 1,
-                        icon: 'md-school',
-                        name,
-                        detail
-                    }];
-                    AsyncStorage.setItem('jobs', JSON.stringify(newJobs));
                 }
                 navigation.replace('Root');
             });
@@ -44,6 +56,7 @@ export default function FormJob({ navigation }){
                 style={styles.input}
                 editable
                 onChangeText={text => setName(text)}
+                defaultValue={name}
             />
             <MonoText style={styles.title}>Job Detail</MonoText>
             <TextInput 
@@ -51,6 +64,7 @@ export default function FormJob({ navigation }){
                 editable
                 multiline={true}
                 onChangeText={text => setDetail(text)}
+                value={detail}
             />
             <TouchableOpacity 
                 style={[styles.button, styles.blue]}

@@ -45,7 +45,7 @@ export default function JobScreen({ navigation }) {
                                             backgroundColor="#3b5998"
                                             size={15}
                                             onPress={() => navigation.navigate("DetailJob", {
-                                                job: job
+                                                job
                                             })}
                                         >
                                             Detail
@@ -54,6 +54,9 @@ export default function JobScreen({ navigation }) {
                                             name="pencil" 
                                             backgroundColor="green"
                                             size={15}
+                                            onPress={() => navigation.navigate("FormJob", {
+                                                job
+                                            })}
                                         >
                                             Edit
                                         </FontAwesome.Button>
