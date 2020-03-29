@@ -4,16 +4,41 @@ import { ScrollView } from "react-native-gesture-handler";
 import OptionButton from "../components/OptionButton";
 import { MonoText } from "../components/StyledText";
 import { FontAwesome } from '@expo/vector-icons';
+import { ConfirmDialog } from 'react-native-simple-dialogs';
 
 export default function JobScreen({ navigation }) {
     const [jobs, setJobs] = useState([]);
+    const [dataDeleted, setdataDeleted] = useState(undefined);
 
-    useEffect(() => {
+    const fetchJobs = () => {
         AsyncStorage.getItem('jobs', (error, result) => {
             if (result) {
                 setJobs(JSON.parse(result));
             }
         });
+    }
+
+    const deleteJob = (idJob) => {
+        AsyncStorage.getItem('jobs', (error, result) => {
+            if (result) {
+                let jobs = JSON.parse(result);
+                jobs.some((job, idxJob) => {
+                    if (job.id === idJob) {
+                        jobs.splice(idxJob,1);
+                        AsyncStorage.setItem('jobs', JSON.stringify(jobs));
+                        return true; // return true to .some()
+                    }
+                    return false;
+                });
+                alert(`${dataDeleted.name} has been deleted`);
+                setdataDeleted(undefined);
+                fetchJobs();
+            }
+        });
+    }
+
+    useEffect(() => {
+        fetchJobs();
     }, []);
 
     return (
@@ -26,6 +51,25 @@ export default function JobScreen({ navigation }) {
                     navigation.navigate('FormJob')
                 }}
             />
+            {
+                dataDeleted &&
+                <ConfirmDialog
+                    title="Confirm Delete Job"
+                    onTouchOutside={() => setdataDeleted(undefined)} 
+                    positiveButton={{
+                        title: "YES",
+                        onPress: () => deleteJob(dataDeleted.id)
+                    }}
+                    negativeButton={{
+                        title: "NO",
+                        onPress: () => setdataDeleted(undefined)
+                    }}
+                >
+                    <View>
+                        <Text>Are you sure you want to Delete #'{dataDeleted.name}'?</Text>
+                    </View>
+                </ConfirmDialog>
+            }
             {
                 jobs.length > 0 &&
                 <ScrollView style={styles.container}>
@@ -64,6 +108,7 @@ export default function JobScreen({ navigation }) {
                                             name="trash" 
                                             backgroundColor="red"
                                             size={15}
+                                            onPress={() => setdataDeleted(job)}
                                         >
                                             Delete
                                         </FontAwesome.Button>
