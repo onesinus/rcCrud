@@ -10,6 +10,7 @@ import BottomTabNavigator from './navigation/BottomTabNavigator';
 import useLinking from './navigation/useLinking';
 
 import FormJob from "./components/FormJob";
+import DetailJob from "./screens/JobDetailScreen";
 
 const Stack = createStackNavigator();
 
@@ -59,6 +60,13 @@ export default function App(props) {
               component={FormJob} 
               options={{
                 title: 'Form Job'
+              }}
+            />
+            <Stack.Screen 
+              name="DetailJob"
+              component={DetailJob}
+              options={{
+                title: 'Detail Job'
               }}
             />
           </Stack.Navigator>

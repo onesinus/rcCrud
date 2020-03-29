@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Button, AsyncStorage, Text } from "react-native";
+import { StyleSheet, Button, AsyncStorage, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import OptionButton from "../components/OptionButton";
 import { MonoText } from "../components/StyledText";
+import { FontAwesome } from '@expo/vector-icons';
 
 export default function JobScreen({ navigation }) {
     const [jobs, setJobs] = useState([]);
@@ -31,11 +32,40 @@ export default function JobScreen({ navigation }) {
                     {
                         jobs.map(job => {
                             return (
-                                <OptionButton 
-                                    key={job.id}
-                                    icon={job.icon}
-                                    label={job.name}
-                                />
+                                <View
+                                    key={job.id}                            
+                                >
+                                    <OptionButton 
+                                        icon={job.icon}
+                                        label={job.name}
+                                    />
+                                    <View style={styles.actions}>
+                                        <FontAwesome.Button 
+                                            name="info-circle" 
+                                            backgroundColor="#3b5998"
+                                            size={15}
+                                            onPress={() => navigation.navigate("DetailJob", {
+                                                job: job
+                                            })}
+                                        >
+                                            Detail
+                                        </FontAwesome.Button>
+                                        <FontAwesome.Button 
+                                            name="pencil" 
+                                            backgroundColor="green"
+                                            size={15}
+                                        >
+                                            Edit
+                                        </FontAwesome.Button>
+                                        <FontAwesome.Button 
+                                            name="trash" 
+                                            backgroundColor="red"
+                                            size={15}
+                                        >
+                                            Delete
+                                        </FontAwesome.Button>
+                                    </View>
+                                </View>
                             )
                         })
                     }
@@ -59,5 +89,9 @@ const styles = StyleSheet.create({
     center: {
         textAlign: 'center',
         marginTop: 10
+    },
+    actions: {
+        flexDirection: 'row',
+        justifyContent: 'space-around'
     }
 })
