@@ -4,7 +4,8 @@ import { MonoText } from '../components/StyledText';
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default function FormJob({ navigation, route }){
-    const { job } = route.params;
+    const params = route.params;
+    const job = params ? params.job : undefined;
 
     const [name, setName]       = useState("");
     const [detail, setDetail]   = useState("");
@@ -23,9 +24,9 @@ export default function FormJob({ navigation, route }){
             alert("Detail is required");
         }else{
             AsyncStorage.getItem('jobs', (error, result) => {
-                if (result) {
+                if (!error) {
                     let currentJobs = JSON.parse(result);
-                    currentJobs = currentJobs.length > 0 ? currentJobs : [];
+                    currentJobs = currentJobs && currentJobs.length > 0 ? currentJobs : [];
                     if (!job) {                            
                         currentJobs.push({
                             id: currentJobs.length+1,
