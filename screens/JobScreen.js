@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Button, AsyncStorage, Text, View } from "react-native";
+import { StyleSheet, Button, AsyncStorage, Text, View, TextInput } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import OptionButton from "../components/OptionButton";
 import { MonoText } from "../components/StyledText";
@@ -8,12 +8,15 @@ import { ConfirmDialog } from 'react-native-simple-dialogs';
 
 export default function JobScreen({ navigation }) {
     const [jobs, setJobs] = useState([]);
+    const [constJobs, setConstJobs] = useState([]);
+
     const [dataDeleted, setdataDeleted] = useState(undefined);
 
     const fetchJobs = () => {
         AsyncStorage.getItem('jobs', (error, result) => {
             if (result) {
                 setJobs(JSON.parse(result));
+                setConstJobs(JSON.parse(result));
             }
         });
     }
@@ -37,12 +40,24 @@ export default function JobScreen({ navigation }) {
         });
     }
 
+    const findJob = (searchValue) => {
+        let tempJobs = constJobs.filter(constJob => {
+            return constJob.name.toLowerCase().includes(searchValue.toLowerCase());
+        });
+        setJobs(tempJobs);
+    }
+
     useEffect(() => {
         fetchJobs();
     }, []);
 
     return (
         <>
+            <TextInput
+                style={styles.input}
+                placeholder="Find Job"
+                onChangeText={text => findJob(text)}
+            />
             <Button 
                 title="Add Job"
                 color="#841584"
@@ -141,5 +156,11 @@ const styles = StyleSheet.create({
     actions: {
         flexDirection: 'row',
         justifyContent: 'space-around'
-    }
+    },
+    input: {
+        height: 28,
+        borderColor: 'gray',
+        borderWidth: 1,
+        paddingVertical: 20
+    },
 })
